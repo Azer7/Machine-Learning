@@ -12,7 +12,7 @@ function setup() {
 	neuron = new Neuron();
 
 	for (let i = 0; i < 100; i++) {
-	    points.push(new Point);
+	    points.push(new Point());
 	}
 
 	//console.log(output);
@@ -25,9 +25,9 @@ function draw() {
     for (let i = 0; i < points.length; i++) {
         points[i].show();
     }
-
+/*
     for (let i = 0; i < points.length; i++) {
         let pInputs = [points[i].x, points[i].y];
         neuron.train(pInputs, points[i].label);
-    }
+    } */
 }
