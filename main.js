@@ -1,7 +1,7 @@
 let neuron;
 let points = [];
 
-let manual = false;
+let manual = true;
 let errorAmount = Infinity;
 
 function setup() {
@@ -36,13 +36,15 @@ function draw() {
         if (!manual)
             neuron.train(pInputs, points[i].label);
         let guess = neuron.guess(pInputs);
+        noFill();
+        strokeWeight(3);
         if (guess == points[i].label)
-            fill(0, 255, 0);
+            stroke(0, 255, 0);
         else {
             errorAmount++;
-            fill(255, 0, 0);
+            stroke(255, 0, 0);
         }
-        ellipse(points[i].pixelX(), points[i].pixelY(), 8, 8);
+        ellipse(points[i].pixelX(), points[i].pixelY(), 12, 12);
     }
 }
 
@@ -60,5 +62,11 @@ function mouseClicked() {
             let pInputs = [points[i].x, points[i].y, points[i].bias];
             neuron.train(pInputs, points[i].label);
         }
+    }
+}
+
+function keyPressed() {
+    if(keyCode === 32) {
+        manual = !manual;
     }
 }
