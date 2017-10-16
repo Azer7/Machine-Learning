@@ -11,9 +11,7 @@ function setup() {
 function draw() {
     population.processFitness();
     
-    population.naturalSelection();
-    
-    population.crossOver();
+    population.newGeneration(); //generate new population
     
     //and?
 }

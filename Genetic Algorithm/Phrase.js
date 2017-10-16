@@ -1,4 +1,4 @@
-﻿class String() {
+class Phrase {
     constructor(length) {
         this.chars = [];
         this.fitness = 0;
@@ -12,22 +12,21 @@
     }
     
     calcFitness(target) {   
-        this.fitness = 0;
+        let score = 0;
         for(let i = 0; i < this.chars.length; i++) {
-            if(this.chars[i] == this.target.charAt(i))
-                this.fitness++;
+            if(this.chars[i] == target.charAt(i))
+                score++;
         }
-    }
-    
-    
+        this.fitness = score / target.length;
+    }  
 }
 
 function randChar() {
-    charCode = charCode(63, 122);
+    let charCode = floor(random(63, 122));
     if(charCode == 63)
         charCode = 32;
     else if(charCode == 64)
         charCode = 46;
     
-    return fromCharCode(charCode);
+    return String.fromCharCode(charCode);
 }
