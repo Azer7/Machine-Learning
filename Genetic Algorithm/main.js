@@ -1,8 +1,8 @@
 let population;
 
 let popSize = 1000;
-let target = "I would enjoy a pink and yellow unicorn";
-let mutationRate = 0.01; //1%
+let target = "A rabbit has spoken.";
+let mutationRate = .007; //1%
 let timeStart;
 
 function setup() {
@@ -21,5 +21,5 @@ function draw() {
         population.evaluate();
     }
     if (population.finished == true)
-        noLoop();
+		noLoop();
 }
