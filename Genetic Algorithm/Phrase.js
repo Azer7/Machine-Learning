@@ -22,21 +22,22 @@ class Phrase {
     }
 
     crossover(crossPhrase) {
-        let midpoint = random(0, this.length);
+        let midpoint = Math.floor(random(this.length));
         let result = new Phrase(this.length);
         for (let i = 0; i < this.length; i++) {
             if (i < midpoint) result.chars[i] = this.chars[i];
-            else result.chars[i] = crossPhrase[i];
+            else result.chars[i] = crossPhrase.chars[i];
         }
         return result;
     }
 
     mutate() {
         for (let i = 0; i < this.length; i++) {
-            if (Math.random < mutationRate)
+            if (Math.random() < mutationRate)
                 this.chars[i] = randChar();
         }
     }
+    
 }
 
 function randChar() {
