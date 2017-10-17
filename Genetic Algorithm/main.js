@@ -1,6 +1,6 @@
 let population;
 
-let popSize = 1000;
+let popSize = 800;
 let target = "A rabbit has spoken.";
 let mutationRate = .007; //1%
 let timeStart;

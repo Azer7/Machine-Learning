@@ -19,6 +19,7 @@ class Phrase {
                 score++;
         }
         this.fitness = score / target.length;
+        this.fitness = pow(this.fitness, 4) + 0.0001;
     }
 
     crossover(crossPhrase) {
