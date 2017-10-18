@@ -1,9 +1,10 @@
 class Population {
-    constructor(amount, mutationRate, target) {
+    constructor(amount, lifeSpan, mutationRate, targetLocation) {
         //variables
         this.population = [];
         this.size = amount;
-        this.target = target;
+        this.lifeSpan = lifeSpan;
+        this.targetLocation = targetLocation;
         this.mutationRate = mutationRate;
         //state
         this.finished = false;
@@ -13,7 +14,7 @@ class Population {
         this.totalFitness;
         //fill population with random characters
         for (let i = 0; i < amount; i++) {
-            this.population.push(new Phrase(this.target.length));
+            this.population.push(new Creature(lifeSpan));
         }
     }
 

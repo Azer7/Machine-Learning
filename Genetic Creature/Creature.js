@@ -1,23 +1,20 @@
-class Phrase {
-    constructor(length) {
-        this.chars = [];
-        this.length = length;
+class Creature {
+    constructor(lifeSpan) {
+        this.forces = [];
+        this.lifeSpan = lifeSpan;
+        this.position = createVector();
+        this.velocity = createVector();
+        this.velChange = createVector();
+        
         this.fitness = 0;
-        for (let i = 0; i < this.length; i++) {
-            this.chars.push(randChar());
+        for (let i = 0; i < this.lifeSpan; i++) {
+            this.forces.push(randomVector());
         }
-    }
-
-    getWord() {
-        return this.chars.join("");
     }
 
     calcFitness(target) {
         let score = 0;
-        for (let i = 0; i < this.chars.length; i++) {
-            if (this.chars[i] == target.charAt(i))
-                score++;
-        }
+
         this.fitness = score / target.length;
         this.fitness = pow(this.fitness, 4) + 0.0001;
     }
@@ -32,6 +29,10 @@ class Phrase {
         return result;
     }
 
+    update() {
+        
+    }
+    
     mutate() {
         for (let i = 0; i < this.length; i++) {
             if (Math.random() < mutationRate)
@@ -41,12 +42,8 @@ class Phrase {
     
 }
 
-function randChar() {
-    let charCode = floor(random(63, 122));
-    if (charCode == 63)
-        charCode = 32;
-    else if (charCode == 64)
-        charCode = 46;
-
-    return String.fromCharCode(charCode);
+function randomVector() {
+    let resultVector = p5.Vector.random2D();
+    resultVector.setMag(0.1);
+    return resultVector();
 }
