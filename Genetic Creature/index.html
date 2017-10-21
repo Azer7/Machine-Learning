@@ -5,36 +5,24 @@
     <title>Sketch</title>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.16/p5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.16/addons/p5.dom.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="DNA.js"></script>
     <script src="Creature.js"></script>
-    <script src="Population.js"></script>
+    <script src="Genome.js"></script>
     <script src="main.js"></script>
 
     <style>
         body {
             text-align: center;
-            background-color: white;
+            background-color: gray;
         }
-        p {
-            text-align: left;
-        }
-        #info {
-            font-weight: bold;
-            font-size: 1.5em;
-            margin-bottom: 40px;
-        }
-		#phrase-box {
-			font-family: Consolas, monaco, monospace;
-		}
+
     </style>
 </head>
 
 <body>
-    <p id="info">
-    </p>
-    
-    <p id="phrase-box">
-    </p>
+    <p id="life-count"></p>
 </body>
 
 </html>

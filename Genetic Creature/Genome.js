@@ -1,10 +1,11 @@
-class Population {
-    constructor(amount, lifeSpan, mutationRate, targetLocation) {
+class Genome {
+    constructor(amount, lifeSpan, mutationRate, target, color) {
         //variables
         this.population = [];
         this.size = amount;
+        this.age = 0;
         this.lifeSpan = lifeSpan;
-        this.targetLocation = targetLocation;
+        this.target = target;
         this.mutationRate = mutationRate;
         //state
         this.finished = false;
@@ -12,15 +13,16 @@ class Population {
 
         this.bestIndex = 0;
         this.totalFitness;
+
         //fill population with random characters
         for (let i = 0; i < amount; i++) {
-            this.population.push(new Creature(lifeSpan));
+            this.population.push(new Creature(lifeSpan, target, color));
         }
     }
 
     processFitness() {
         for (let i = 0; i < this.size; i++) {
-            this.population[i].calcFitness(this.target);
+            this.population[i].calcFitness();
         }
     }
 
@@ -35,9 +37,13 @@ class Population {
             }
             this.totalFitness += this.population[i].fitness;
         }
-        
+
+        if (this.population[this.bestIndex].completed == true) {
+            this.mutationRate = 0.01;
+        }
+
         //form new generation
-        futureGen.push(this.population[this.bestIndex]);
+        futureGen.push(this.population[this.bestIndex].copy());
         for (let i = 0; i < this.size - 1; i++) {
             //get 2 random parents
             let parentA = this.getRandomMember(this.totalFitness);
@@ -48,10 +54,11 @@ class Population {
             }
             let child;
             child = parentA.crossover(parentB);
-            child.mutate();
+            child.mutate(this.mutationRate);
             futureGen.push(child);
         }
         this.population = futureGen;
+        this.age = 0;
         this.generation++;
     }
 
@@ -64,25 +71,20 @@ class Population {
             rand -= this.population[i].fitness;
         }
     }
-    
-    evaluate() { //should be called after newGeneration()
-        if(this.population[this.bestIndex].getWord() == this.target)
-            this.finished = true;
-        
-        let averageFitness = this.totalFitness / this.size;
-        
-        let info = $("#info");
-        info.empty();
-        //display info
-        info.append("Best phrase:  " + this.population[this.bestIndex].getWord() + "<br/>");
-        info.append("Average fitness:  " + Math.round(averageFitness*1000)/1000 + "<br/>");
-        info.append("Time Taken:  " + Math.round((performance.now() - timeStart)) + "ms <br/>");
-    
-        let phraseBox = $("#phrase-box");
-        
-        phraseBox.empty();
-        for(let i = 0; i < (this.size < 150 ? this.size : 150); i++) {
-            phraseBox.append(this.population[i].getWord() + "<br/>");
+
+    update(times) {
+        for (let i = 0; i < times && this.age < this.lifeSpan; i++) {
+            this.age++;
+            for (let j = 0; j < this.size; j++) {
+                this.population[j].update();
+            }
+        }
+    }
+
+    draw() {
+        //draw creatures
+        for (let i = 0; i < this.size; i++) {
+            this.population[i].draw();
         }
     }
 }

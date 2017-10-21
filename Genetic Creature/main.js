@@ -1,33 +1,96 @@
-let population;
+let genomes = [];
+let genomeAmount = 5;
 
-let popSize = 800;
-let target = "I am doing lots of interesting work yay... but wait...";
-let mutationRate = .007; //1%
+let popSize = 50;
+let lifeSpan = 500;
+let mutationRate = .03; //1%
+let target;
+
 let timeStart;
-
 let speed = 1;
+let instant = 1;
+
+let ageP;
+
+let obst = {
+    x: 150,
+    y: 250,
+    w: 500,
+    h: 20
+}
 
 function setup() {
-    createCanvas(600, 800);
+    createCanvas(800, 600);
+    frameRate(60);
+
+    ageP = createP();
+
+    target = createVector(width / 2, 50); //initialize final location
 
     timeStart = performance.now();
-    population = new Population(popSize, mutationRate, target);
+    for (let i = 0; i < genomeAmount; i++) {
+        let col = color(i * 50, 255 - i * 40, 150 + i * 25);
+        genomes.push(new Genome(popSize, lifeSpan, mutationRate, target, col));
+    }
 }
 
 function draw() {
-    if (frameCount % 200 == 0) {
-        population.processFitness();
-        population.evaluate();
-        
-        //generate new population
-        population.newGeneration(); 
+    background("white");
+    for (let i = 0; i < instant; i++) {
+        for (let j = 0; j < genomes.length; j++) {
+            if (genomes[j].age == lifeSpan) {
+                genomes[j].processFitness();
+
+                //generate new genomes[j]
+                genomes[j].newGeneration();
+            }
+
+            genomes[j].update(speed); //To process/move more than once a frame
+        }
     }
 
-    //population.checkCollision();
+    gameDraw(); //draw shared game objects
 
-    if (frameCount % speed == 0) {
-        population.draw();
+    for (let i = 0; i < genomes.length; i++)
+        genomes[i].draw(); //draw to screen
+
+}
+
+function gameDraw() {
+    //draw target
+    fill("orange")
+    noStroke();
+    ellipse(target.x, target.y, 30);
+
+    //draw obstacles
+    noStroke();
+    fill("black");
+    rect(obst.x, obst.y, obst.w, obst.h);
+
+    //draw age
+    ageP.html(genomes[0].age);
+}
+
+function mouseClicked() {
+    console.log("mouse location:");
+    console.log("x: " + mouseX);
+    console.log("y: " + mouseY);
+}
+
+function keyPressed() {
+    if (keyCode === 107)
+        speed *= 2;
+    else if (keyCode === 109 && speed > 1)
+        speed /= 2;
+    else if (keyCode === 32)
+        speed = 1;
+    else if (keyCode === 192) {
+        if (instant == 1) {//if not instant: switch to instant
+            speed = lifeSpan;
+            instant = 100;
+        } else { //if instant: switch to not instant
+            speed = 1;
+            instant = 1;
+        }
     }
-    if (population.finished == true)
-        noLoop();
 }
