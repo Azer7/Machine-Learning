@@ -78,9 +78,9 @@ function mouseClicked() {
 }
 
 function keyPressed() {
-    if (keyCode === 107)
+    if (keyCode === 107 || keyCode === 189)
         speed *= 2;
-    else if (keyCode === 109 && speed > 1)
+    else if ((keyCode === 109 || keyCode === 187) && speed > 1)
         speed /= 2;
     else if (keyCode === 32)
         speed = 1;
