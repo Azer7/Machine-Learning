@@ -37,10 +37,12 @@ function setup() {
 function draw() {
     background("white");
     for (let i = 0; i < instant; i++) {
+     
         for (let j = 0; j < genomes.length; j++) {
             if (genomes[j].age == lifeSpan) {
                 genomes[j].processFitness();
-
+                if (instant != 100 && j == 0)
+                console.log("gen " + genomes[0].generation + ":");
                 //generate new genomes[j]
                 genomes[j].newGeneration();
             }

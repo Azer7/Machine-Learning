@@ -41,9 +41,13 @@ class Genome {
         if (this.population[this.bestIndex].completed == true) {
             this.mutationRate = 0.01;
         }
-
-        //form new generation
+        
+        if (instant != 100) {
+            console.log(this.population[this.bestIndex].age);
+        }
+            //form new generation
         futureGen.push(this.population[this.bestIndex].copy());
+        futureGen[0].show = true;
         for (let i = 0; i < this.size - 1; i++) {
             //get 2 random parents
             let parentA = this.getRandomMember(this.totalFitness);
@@ -84,7 +88,8 @@ class Genome {
     draw() {
         //draw creatures
         for (let i = 0; i < this.size; i++) {
-            this.population[i].draw();
+            if (this.population[i].show)
+                this.population[i].draw();
         }
     }
 }
