@@ -11,7 +11,7 @@
         <LinearGradientBrush x:Key="waitBrush" StartPoint="0,0" EndPoint="0,1">
             <LinearGradientBrush.GradientStops>
                 <GradientStopCollection>
-                    <GradientStop Color="DarkSlateGray" Offset="0" />
+                    <GradientStop Color="DarkSlateGray" Offset="-0.5" />
                     <GradientStop Color="Transparent" Offset="1" />
                 </GradientStopCollection>
             </LinearGradientBrush.GradientStops>
@@ -24,17 +24,28 @@
             <ColumnDefinition Width="1*"/>
             <ColumnDefinition Width="100*"/>
         </Grid.ColumnDefinitions>
-        <DockPanel x:Name="p1Panel" Grid.Column="0">
-            <Button x:Name="p1Roll" Content="Roll" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="30,0,0,20" Width="80" Height="30"/>
-            <Button x:Name="p1Hold" Content="Hold" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,40,20" Width="80" Height="30"/>
-        </DockPanel>
-        <Border Grid.Column="1" BorderBrush="Black" BorderThickness="3" HorizontalAlignment="Center" Height="403" VerticalAlignment="Center" Width="1"/>
+        <Grid x:Name="p1Panel" Grid.Column="0">
+            <Label x:Name="p1ScoreLabel" Content="Score: 0" Height="30" Margin="20" HorizontalContentAlignment="Center" VerticalAlignment="Top" FontSize="18"/>
+            <Rectangle Height="2" Fill="Black" VerticalAlignment="Top" Margin="20,55,20,0"></Rectangle>
+            <Label x:Name="p1RoundScoreLabel" Content="Round Score: 0" Height="30" Margin="20,90,20,0" HorizontalContentAlignment="Center" VerticalAlignment="Top" FontSize="16"/>
+            <Label x:Name="p1DieLabel" Content="Label" HorizontalAlignment="Center" Margin="0,170,0,0" Height="50" VerticalAlignment="Top" FontSize="16" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
 
-        <DockPanel x:Name="p2Panel" Grid.Column="2">
-            <Button x:Name="p2Roll" Content="Roll" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="40,0,0,20" Width="80" Height="30"/>
-            <Button x:Name="p2Hold" Content="Hold" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,30,20" Width="80" Height="30"/>
-        </DockPanel>
-        <CheckBox Content="CheckBox" Grid.Column="2" HorizontalAlignment="Left" Margin="551.2,110,-354.8,0" VerticalAlignment="Top" Width="100"/>
+            <Button x:Name="p1RollButton" Content="Roll" HorizontalAlignment="Left" Margin="30,0,0,20" Width="90" Height="30" VerticalAlignment="Bottom" Click="P1Roll_Click"/>
+            <Button x:Name="p1HoldButton" Content="Hold" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,40,20" Width="90" Height="30" Click="P1Hold_Click"/>
+            <Label Content="P1" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+        </Grid>
+        <Rectangle Grid.Column="1" Fill="Black" Width="3" Margin="0, 20" HorizontalAlignment="Center"></Rectangle>
+        <Grid x:Name="p2Panel" Grid.Column="2" IsEnabled="False">
+            <Label x:Name="p2ScoreLabel" Content="Score: 0" Height="30" Margin="20,20,20,0" HorizontalContentAlignment="Center" VerticalAlignment="Top" FontSize="18"/>
+            <Rectangle Height="2" Fill="Black" VerticalAlignment="Top" Margin="20,55,20,0"></Rectangle>
+            <Label x:Name="p2DieLabel" Content="Label" HorizontalAlignment="Center" Margin="0,170,0,0" Height="50" VerticalAlignment="Top" FontSize="16" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+
+            <Button x:Name="p2RollButton" Content="Roll" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="40,0,0,20" Width="90" Height="30" Click="P2Roll_Click"/>
+            <Button x:Name="p2HoldButton" Content="Hold" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,30,20" Width="90" Height="30" Click="P2Hold_Click"/>
+            <Label x:Name="p2RoundScoreLabel" Content="Round Score: 0" Height="30" Margin="20,90,20,0" HorizontalContentAlignment="Center" VerticalAlignment="Top" FontSize="16"/>
+            <Label Content="P2" HorizontalAlignment="Left" Margin="254,10,0,0" VerticalAlignment="Top"/>
+        </Grid>
+        <Label x:Name="winLabel" Content="You&#xD;&#xA;Win!" HorizontalAlignment="Center" Margin="220,155,212,139" VerticalAlignment="Center" Grid.ColumnSpan="3" Background="#FFDBFFE3" Height="125" Width="160" FontSize="36" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="10,5,5,25" Visibility="Hidden"/>
 
     </Grid>
 </Window>
