@@ -8,16 +8,38 @@ namespace NN
 {
     class Generation
     {
-        public int CurrentGen;
-        List<NeuralNet> neuralNets;
+        public int CurrentGen = 0;
+        public List<Pig.Player> Players;
+        public int currentPlayerIndex = 0;
 
         public Generation(int numberPerGeneration, int inputCount, int hiddenLayerCount, int hiddenLayerSize, int outputCount)
         {
-            CurrentGen = 0;
-            neuralNets = new List<NeuralNet>();
-            //base initialization
+            for(int i = 0; i < numberPerGeneration; i++)
+            {
+                NeuralNet ai = new NeuralNet(inputCount, hiddenLayerCount, hiddenLayerSize, outputCount);
+                Players.Add(new Pig.Player(ai));
+            }            
+        }
 
-            neuralNets = Enumerable.Repeat(new NeuralNet(inputCount, hiddenLayerCount, hiddenLayerSize, outputCount), numberPerGeneration).ToList();       
+        public void PlayGame()
+        {
+            Pig.Player p1 = Players[currentPlayerIndex];
+            int randomIndex = 0;
+            Random indexGen = new Random();
+            do
+            {
+                randomIndex = indexGen.Next(1, Players.Count);
+            } while (randomIndex == currentPlayerIndex);
+
+            Pig.Player p2 = Players[randomIndex];
+
+            //get two players
+            Pig.Pig game = new Pig.Pig(p1, p2);
+            
+            while(!game.hasEnded)
+            {
+                
+            }
         }
     }
 
@@ -25,13 +47,23 @@ namespace NN
     {
         Layer _inputLayer;
         List<Layer> _hiddenLayers;
-        Layer _outputLayer;       
+        Layer _outputLayer;
+
+        public double Fitness = 0;
 
         /// <summary>
         /// Empty Constructor
         /// </summary>
         public NeuralNet()
         {
+        }
+
+        public NeuralNet Clone()
+        {
+            NeuralNet clonedNet = new NeuralNet();
+
+
+            return clonedNet;
         }
 
         public NeuralNet(int inputCount, int hiddenLayerCount, int hiddenLayerSize, int outputCount)
@@ -41,14 +73,6 @@ namespace NN
             _outputLayer = new Layer(hiddenLayerSize, outputCount); // outputs to a different amount of nodes
 
 
-        }
-        
-        NeuralNet Clone()
-        {
-            NeuralNet clonedNet = new NeuralNet();
-
-
-            return clonedNet;
         }
 
         double tanh(double input)
@@ -73,7 +97,17 @@ namespace NN
             _neurons = Enumerable.Range(1, nodes).Select(i => new Neuron(inputNodes + 1)).ToList();
         }
 
+        public List<double> ComputeAll(List<double> inputs)
+        {
+            List<double> outputs = new List<double>();
 
+            for(int i = 0; i < _neurons.Count; i++)
+            {
+                outputs.Add(_neurons[i].Compute(inputs.Append(1).ToList()));
+            }
+
+            return outputs;
+        }
     }
 
     class Neuron
@@ -84,10 +118,11 @@ namespace NN
         {
 
             Random weightGen = new Random(Guid.NewGuid().GetHashCode());
+            
             _weights = Enumerable.Range(1, inputWeights).Select(i=>weightGen.NextDouble()).ToList();            
         }
 
-        double Compute(List<int> inputs)
+        public double Compute(List<double> inputs)
         {
             double total = 0;
 

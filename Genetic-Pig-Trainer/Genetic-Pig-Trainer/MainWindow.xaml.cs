@@ -30,7 +30,7 @@ namespace Genetic_Pig_Trainer
         {
             InitializeComponent();
             timer.Tick += new EventHandler(timer_Tick);
-            timer.Interval = new TimeSpan(0, 0, 0, 0, 5);            
+            timer.Interval = new TimeSpan(0, 0, 0, 0, 10);            
         }
 
         public void timer_Tick(object sender, EventArgs e)

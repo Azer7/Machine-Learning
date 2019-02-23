@@ -9,7 +9,7 @@ class Creature {
         this.target = target;
         this.completed = false;
         this.crashed = false;
-        this.show = false;
+        this.show = true;
 
         this.color = color;
         if (dna)
