@@ -75,7 +75,23 @@ namespace NN
 
         }
 
-        double tanh(double input)
+        public List<double> ComputeLayers(List<double> inputs)
+        {
+            List<double> layerOutput;
+
+            layerOutput = _inputLayer.ComputeNeurons(inputs);
+
+            foreach (Layer hiddenLayer in _hiddenLayers)
+            {
+                layerOutput = hiddenLayer.ComputeNeurons(layerOutput);
+            }
+
+            layerOutput = _outputLayer.ComputeNeurons(layerOutput);
+
+            return layerOutput;
+        }
+
+        double Tanh(double input)
         {
 
             return 1 / (1 + Math.Pow(2.71828, -1 * input));
@@ -97,7 +113,7 @@ namespace NN
             _neurons = Enumerable.Range(1, nodes).Select(i => new Neuron(inputNodes + 1)).ToList();
         }
 
-        public List<double> ComputeAll(List<double> inputs)
+        public List<double> ComputeNeurons(List<double> inputs)
         {
             List<double> outputs = new List<double>();
 
@@ -124,15 +140,15 @@ namespace NN
 
         public double Compute(List<double> inputs)
         {
-            double total = 0;
+            double output = 0;
 
             //sum all weighti * inputi
             for (int i = 0; i < inputs.Count; i++)
             {
-                total += _weights[i] * inputs[i];
+                output += _weights[i] * inputs[i];
             }
 
-            return total;
+            return output;
         }
 
         

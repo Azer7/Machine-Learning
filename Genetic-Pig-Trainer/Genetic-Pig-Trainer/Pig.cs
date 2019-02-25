@@ -12,6 +12,8 @@ namespace Pig
         Player _player1;
         Player _player2;
         Player _currentPlayer;
+        Player _otherPlayer;
+        bool _hasEnded = false;
 
         public Pig(Player player1, Player player2)
         {
@@ -19,17 +21,22 @@ namespace Pig
             _player2 = player2;
 
             _currentPlayer = player1;
+            _otherPlayer = player2;
         }
 
-        public void SwitchTurn(Player currentPlayer, Player otherPlayer)
+        public void PlayRound()
         {
-            currentPlayer.RoundScore = 0;
-            //reset score
+            double toRoll = _currentPlayer.RollDecision(_otherPlayer._score, _otherPlayer._roundScore);
 
-            currentPlayer.IsTurn = false;
-            otherPlayer.IsTurn = true;
+            if (toRoll > 0.5)
+            {
+                RollRound(_currentPlayer, _otherPlayer);
+            }
+            else
+            {
+                HoldRound(_currentPlayer, _otherPlayer);
+            }
 
-            _currentPlayer = otherPlayer;
         }
 
         public void RollRound(Player currentPlayer, Player otherPlayer)
@@ -37,30 +44,43 @@ namespace Pig
             Random dieGen = new Random();
             int roll = dieGen.Next(1, 7);
 
-            if(roll == 1)
+            if (roll == 1)
             {
                 //switch turn
                 SwitchTurn(currentPlayer, otherPlayer);
             }
             else
             {
-                currentPlayer.RoundScore += roll;
+                currentPlayer._roundScore += roll;
             }
-
         }
 
         public void HoldRound(Player currentPlayer, Player otherPlayer)
         {
-            currentPlayer.Score += currentPlayer.RoundScore;
-            SwitchTurn(currentPlayer, otherPlayer);
-        } 
+            currentPlayer._score += currentPlayer._roundScore;
+            if (currentPlayer._score >= 100)
+                _hasEnded = true;
+            else
+                SwitchTurn(currentPlayer, otherPlayer);
+        }
 
+        public void SwitchTurn(Player currentPlayer, Player otherPlayer)
+        {
+            currentPlayer._roundScore = 0;
+            //reset score
+
+            currentPlayer.IsTurn = false;
+            otherPlayer.IsTurn = true;
+
+            _currentPlayer = otherPlayer;
+            _otherPlayer = currentPlayer;
+        }
     }
 
     class Player
     {
-        public int Score = 0;
-        public int RoundScore = 0;
+        public int _score = 0;
+        public int _roundScore = 0;
         public bool IsTurn = false;
 
         public NN.NeuralNet AINet;
@@ -70,9 +90,13 @@ namespace Pig
             AINet = Net;
         }
 
-        public void MakeDecision()
+        public double RollDecision(int otherScore, int otherRoundScore)
         {
+            
 
+            output = AINet.ComputeLayers(_score, _roundScore, otherScore, otherRoundScore);
+
+            return output;
         }
     }
 }
