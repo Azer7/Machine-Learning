@@ -92,9 +92,9 @@ namespace Pig
 
         public double RollDecision(int otherScore, int otherRoundScore)
         {
-            
+            double output;
 
-            output = AINet.ComputeLayers(_score, _roundScore, otherScore, otherRoundScore);
+            output = AINet.ComputeLayers(new List<double> { _score, _roundScore, otherScore, otherRoundScore }.to);
 
             return output;
         }
