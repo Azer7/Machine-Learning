@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
+
 namespace Pig
 {
     class Pig
@@ -26,7 +28,7 @@ namespace Pig
 
         public void PlayRound()
         {
-            double toRoll = _currentPlayer.RollDecision(_otherPlayer._score, _otherPlayer._roundScore);
+            double toRoll = _currentPlayer.RollDecision(_otherPlayer._score, _otherPlayer._roundScore)[0];
 
             if (toRoll > 0.5)
             {
@@ -82,6 +84,7 @@ namespace Pig
         public int _score = 0;
         public int _roundScore = 0;
         public bool IsTurn = false;
+        public double fitness = 0;
 
         public NN.NeuralNet AINet;
 
@@ -90,13 +93,19 @@ namespace Pig
             AINet = Net;
         }
 
-        public double RollDecision(int otherScore, int otherRoundScore)
+        public Player(Player player) : this(player.AINet) { }
+
+        public List<double> RollDecision(int otherScore, int otherRoundScore)
         {
-            double output;
+            List<double> outputs;
 
-            output = AINet.ComputeLayers(new List<double> { _score, _roundScore, otherScore, otherRoundScore }.to);
 
-            return output;
+            List<int> input = new List<int> { _score, _roundScore, otherScore, otherRoundScore };
+            List<double> inputDouble = input.ConvertAll(x => (double)x);
+
+            outputs = AINet.ComputeLayers(inputDouble);
+            
+            return outputs;
         }
     }
 }

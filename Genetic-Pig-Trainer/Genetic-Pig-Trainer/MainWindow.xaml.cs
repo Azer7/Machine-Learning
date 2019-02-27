@@ -39,7 +39,7 @@ namespace Genetic_Pig_Trainer
             count++;
             CountLbl.Content = count;
             //do move
-
+            aiGeneration.PlayGame();
 
 
 
