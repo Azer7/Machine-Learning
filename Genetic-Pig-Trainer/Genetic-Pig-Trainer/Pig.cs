@@ -1,21 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-
 
 namespace Pig
 {
-    class Pig
+    internal class Pig
     {
         public bool hasEnded = false;
-        Player _player1;
-        Player _player2;
-        Player _currentPlayer;
-        Player _otherPlayer;
-        bool _hasEnded = false;
+        private Player _player1;
+        private Player _player2;
+        private Player _currentPlayer;
+        private Player _otherPlayer;
+        private Player _winnerPlayer;
+        private bool _hasEnded = false;
 
         public Pig(Player player1, Player player2)
         {
@@ -38,7 +34,6 @@ namespace Pig
             {
                 HoldRound(_currentPlayer, _otherPlayer);
             }
-
         }
 
         public void RollRound(Player currentPlayer, Player otherPlayer)
@@ -61,9 +56,25 @@ namespace Pig
         {
             currentPlayer._score += currentPlayer._roundScore;
             if (currentPlayer._score >= 100)
+            {
                 _hasEnded = true;
+                currentPlayer._score = 100;
+                _winnerPlayer = currentPlayer;
+            }
             else
                 SwitchTurn(currentPlayer, otherPlayer);
+        }
+
+        public void CalculateFitness()
+        {
+            _player1.roundFitness = 0;
+            _player2.roundFitness = 0;
+
+            _player1.roundFitness += _player1._roundScore;
+            _player2.roundFitness += _player2._roundScore;
+
+            _winnerPlayer.roundFitness += 50;
+
         }
 
         public void SwitchTurn(Player currentPlayer, Player otherPlayer)
@@ -79,12 +90,13 @@ namespace Pig
         }
     }
 
-    class Player
+    internal class Player
     {
         public int _score = 0;
         public int _roundScore = 0;
         public bool IsTurn = false;
         public double fitness = 0;
+        public double roundFitness = 0;
 
         public NN.NeuralNet AINet;
 
@@ -93,18 +105,19 @@ namespace Pig
             AINet = Net;
         }
 
-        public Player(Player player) : this(player.AINet) { }
+        public Player(Player player) : this(player.AINet)
+        {
+        }
 
         public List<double> RollDecision(int otherScore, int otherRoundScore)
         {
             List<double> outputs;
 
-
             List<int> input = new List<int> { _score, _roundScore, otherScore, otherRoundScore };
             List<double> inputDouble = input.ConvertAll(x => (double)x);
 
             outputs = AINet.ComputeLayers(inputDouble);
-            
+
             return outputs;
         }
     }

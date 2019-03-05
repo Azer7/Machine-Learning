@@ -63,7 +63,7 @@ namespace Genetic_Neural_Pig
         {
             int roll = new Random().Next(1, 6);
             p2DieLabel.Content = roll;
-
+            
             if (roll == 1)
             {
                 p2RoundScore = 0;
@@ -71,7 +71,7 @@ namespace Genetic_Neural_Pig
             }
             else
                 p2RoundScore += roll;
-
+            
             p2RoundScoreLabel.Content = p2RoundScore;
         }
 

@@ -4,10 +4,13 @@ using System.Linq;
 
 namespace NN
 {
-    class Generation
+    internal class Generation
     {
-        public int CurrentGen = 0;
+        public int currentGen = 0;
         public List<Pig.Player> Players = new List<Pig.Player>();
+        public int playerIndex = 0; //count through each player
+        public int versusIndex = 0; //count through each versus player
+
         public int currentPlayerIndex = 0;
 
         public Generation(int numberPerGeneration, int inputCount, int hiddenLayerCount, int hiddenLayerSize, int outputCount)
@@ -19,36 +22,47 @@ namespace NN
             }
         }
 
+        public void CreateGen()
+        {
+            
+        }
+
         public void PlayGame()
         {
-            Pig.Player p1 = Players[currentPlayerIndex];
+            if (versusIndex == playerIndex)
+                versusIndex++;
 
-            int randomIndex = 0;
-            Random indexGen = new Random();
-            do
+            if (versusIndex >= Players.Count)
             {
-                randomIndex = indexGen.Next(1, Players.Count);
-            } while (randomIndex == currentPlayerIndex);
-
-            Pig.Player p2 = Players[randomIndex];
-
-            //get two players
-            Pig.Pig game = new Pig.Pig(p1, p2);
-
-            while (!game.hasEnded)
-            {
-                game.PlayRound();
+                playerIndex++;
             }
 
-            currentPlayerIndex++;
-        }
+            if (playerIndex >= Players.Count)
+                CreateGen();
+            else
+            {
+                Pig.Player p1 = Players[playerIndex];
+                Pig.Player p2 = Players[versusIndex];
+                versusIndex++;
+
+                //get two players
+                Pig.Pig game = new Pig.Pig(p1, p2);
+
+                while (!game.hasEnded)
+                {
+                    game.PlayRound();
+                }
+
+                game.CalculateFitness();
+            }
+        }   
     }
 
-    class NeuralNet
+    internal class NeuralNet
     {
-        Layer _inputLayer;
-        List<Layer> _hiddenLayers;
-        Layer _outputLayer;
+        private Layer _inputLayer;
+        private List<Layer> _hiddenLayers;
+        private Layer _outputLayer;
 
         public double Fitness = 0;
 
@@ -59,12 +73,14 @@ namespace NN
         {
         }
 
-        public NeuralNet Clone()
+        public NeuralNet(NeuralNet copyNet)
         {
-            NeuralNet clonedNet = new NeuralNet();
-
-
-            return clonedNet;
+            _inputLayer = new Layer(copyNet._inputLayer);
+            foreach (Layer layer in copyNet._hiddenLayers)
+            {
+                _hiddenLayers.Add(new Layer(layer));
+            }
+            _outputLayer = new Layer(copyNet._outputLayer);
         }
 
         public NeuralNet(int inputCount, int hiddenLayerCount, int hiddenLayerSize, int outputCount)
@@ -74,8 +90,6 @@ namespace NN
             _outputLayer = new Layer(hiddenLayerSize, outputCount); // outputs to a different amount of nodes
         }
 
-
-
         /// <summary>
         /// Crosses over NeuralNet n1 and NeuralNet n2
         /// </summary>
@@ -84,14 +98,30 @@ namespace NN
         public NeuralNet(NeuralNet network1, NeuralNet network2)
         {
             //crossover
-
+            
             _inputLayer = new Layer(network1._inputLayer, network2._inputLayer);
             for (int i = 0; i < _hiddenLayers.Count; i++)
             {
                 _hiddenLayers[i] = new Layer(network1._hiddenLayers[i], network2._hiddenLayers[i]);
-
             }
             _outputLayer = new Layer(network1._outputLayer, network2._outputLayer);
+        }
+
+        /// <summary>
+        /// gets a mutated copy of the network
+        /// </summary>
+        /// <param name="mutateRate">default 1% mutateRate</param>
+        /// <returns></returns>
+        public void Mutate(double mutateRate = 0.01)
+        {
+            Random mutateGen = new Random();
+
+            _inputLayer.Mutate(mutateRate);
+            foreach (Layer hiddenLayer in _hiddenLayers)
+            {
+                hiddenLayer.Mutate(mutateRate);
+            }
+            _outputLayer.Mutate(mutateRate);
         }
 
         public List<double> ComputeLayers(List<double> inputs)
@@ -110,18 +140,16 @@ namespace NN
             return layerOutput;
         }
 
-        double Tanh(double input)
+        private double Tanh(double input)
         {
-
             return 1 / (1 + Math.Pow(2.71828, -1 * input));
         }
-
     }
 
-    class Layer
+    internal class Layer
     {
-        int _inputNeuronCount;
-        int _neuronCount;
+        private int _inputNeuronCount;
+        private int _neuronCount;
         public List<Neuron> _neurons;
 
         public Layer(int inputNeuronCount, int neuronCount)
@@ -154,6 +182,24 @@ namespace NN
             }
         }
 
+        public Layer(Layer copyLayer)
+        {
+            _inputNeuronCount = copyLayer._inputNeuronCount;
+            _neuronCount = copyLayer._neuronCount;
+            foreach (Neuron neuron in copyLayer._neurons)
+            {
+                _neurons.Add(new Neuron(neuron));
+            }
+        }
+
+        public void Mutate(double mutateRate = 0.01)
+        {
+            foreach (Neuron neuron in _neurons)
+            {
+                neuron.Mutate(mutateRate);
+            }
+        }
+
         public List<double> ComputeNeurons(List<double> inputs)
         {
             List<double> outputs = new List<double>();
@@ -167,13 +213,12 @@ namespace NN
         }
     }
 
-    class Neuron
+    internal class Neuron
     {
-        List<double> _weights;
+        public List<double> _weights;
 
         public Neuron(int inputWeights)
         {
-
             Random weightGen = new Random(Guid.NewGuid().GetHashCode());
 
             _weights = Enumerable.Range(1, inputWeights).Select(i => weightGen.NextDouble() * 0.1).ToList();
@@ -188,6 +233,20 @@ namespace NN
             _weights = new List<double>(neuron._weights);
         }
 
+        public void Mutate(double mutateRate = 0.01)
+        {
+            Random randomGen = new Random();
+
+            for(int i = 0; i < _weights.Count; i++)
+            {
+                if(randomGen.NextDouble() < mutateRate)
+                {
+                    _weights[i] = randomGen.NextDouble();
+                }
+            }
+        }
+
+
         public double Compute(List<double> inputs)
         {
             double output = 0;
@@ -200,7 +259,7 @@ namespace NN
 
             return output;
         }
-
-
     }
 }
+
+//get pranked

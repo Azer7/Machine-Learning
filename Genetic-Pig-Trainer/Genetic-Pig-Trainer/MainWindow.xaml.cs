@@ -41,10 +41,6 @@ namespace Genetic_Pig_Trainer
             //do move
             aiGeneration.PlayGame();
 
-
-
-
-
             timer.Start();
             //wait a ms or two or 5
         }
