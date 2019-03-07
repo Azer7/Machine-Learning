@@ -9,6 +9,5 @@
     <Grid>
         <Button x:Name="toggleStartBtn" Content="Run" HorizontalAlignment="Left" Margin="340,295,0,0" VerticalAlignment="Top" Width="85" Height="45" Click="ToggleStartBtn_Click"/>
         <Label x:Name="CountLbl" Content="Label" HorizontalAlignment="Left" Margin="365,120,0,0" VerticalAlignment="Top"/>
-
     </Grid>
 </Window>
