@@ -6,8 +6,9 @@ namespace Pig
     internal class Pig
     {
         public bool hasEnded = false;
-        private Player _player1;
-        private Player _player2;
+        public int roundCount = 0;
+        public Player _player1;
+        public Player _player2;
         private Player _currentPlayer;
         private Player _otherPlayer;
         private Player _winnerPlayer;
@@ -24,9 +25,10 @@ namespace Pig
 
         public void PlayRound()
         {
+            roundCount++;
             double toRoll = _currentPlayer.RollDecision(_otherPlayer._score, _otherPlayer._roundScore)[0];
 
-            if (toRoll > 0.5)
+            if (toRoll > 0)
             {
                 RollRound(_currentPlayer, _otherPlayer);
             }
@@ -38,7 +40,7 @@ namespace Pig
 
         public void RollRound(Player currentPlayer, Player otherPlayer)
         {
-            Random dieGen = new Random();
+            Random dieGen = new Random(Guid.NewGuid().GetHashCode());
             int roll = dieGen.Next(1, 7);
 
             if (roll == 1)
@@ -67,14 +69,17 @@ namespace Pig
 
         public void CalculateFitness()
         {
-            _player1.roundFitness = 0;
-            _player2.roundFitness = 0;
+            _player1.gameFitness = 0;
+            _player2.gameFitness = 0;
 
-            _player1.roundFitness += _player1._roundScore;
-            _player2.roundFitness += _player2._roundScore;
+            _player1.gameFitness += _player1._score;
+            _player2.gameFitness += _player2._score;
 
-            _winnerPlayer.roundFitness += 50;
+            if (_hasEnded)
+                _winnerPlayer.gameFitness += 50;
 
+            _player1.fitness += _player1.gameFitness;
+            _player2.fitness += _player2.gameFitness;
         }
 
         public void SwitchTurn(Player currentPlayer, Player otherPlayer)
@@ -95,18 +100,27 @@ namespace Pig
         public int _score = 0;
         public int _roundScore = 0;
         public bool IsTurn = false;
-        public double fitness = 0;
-        public double roundFitness = 0;
+        public double fitness = 100;
+        public double gameFitness = 0;
 
-        public NN.NeuralNet AINet;
+        public NN.NeuralNet net;
 
         public Player(NN.NeuralNet Net)
         {
-            AINet = Net;
+            net = Net;
         }
 
-        public Player(Player player) : this(player.AINet)
+        public Player(Player player) : this(player.net)
         {
+        }
+        /// <summary>
+        /// crosses over player1 and player2
+        /// </summary>
+        /// <param name="player1"></param>
+        /// <param name="player2"></param>
+        public Player(Player player1, Player player2)
+        {
+            net = new NN.NeuralNet(player1.net, player2.net);
         }
 
         public List<double> RollDecision(int otherScore, int otherRoundScore)
@@ -116,7 +130,7 @@ namespace Pig
             List<int> input = new List<int> { _score, _roundScore, otherScore, otherRoundScore };
             List<double> inputDouble = input.ConvertAll(x => (double)x);
 
-            outputs = AINet.ComputeLayers(inputDouble);
+            outputs = net.ComputeLayers(inputDouble);
 
             return outputs;
         }

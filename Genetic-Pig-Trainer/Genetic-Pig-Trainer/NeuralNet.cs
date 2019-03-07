@@ -13,8 +13,24 @@ namespace NN
 
         public int currentPlayerIndex = 0;
 
+        //input parameters 
+        public int _numberPerGeneration = 0;
+        public int _inputCount = 0;
+        public int _hiddenLayerCount = 0;
+        public int _hiddenLayerSize = 0;
+        public int _outputCount = 0;
+
+        private double genPlayerFitScale = 0.5;
+
+
         public Generation(int numberPerGeneration, int inputCount, int hiddenLayerCount, int hiddenLayerSize, int outputCount)
         {
+            _numberPerGeneration = numberPerGeneration;
+            _inputCount = inputCount;
+            _hiddenLayerCount = hiddenLayerCount;
+            _hiddenLayerSize = hiddenLayerSize;
+            _outputCount = outputCount;
+
             for (int i = 0; i < numberPerGeneration; i++)
             {
                 NeuralNet ai = new NeuralNet(inputCount, hiddenLayerCount, hiddenLayerSize, outputCount);
@@ -24,7 +40,58 @@ namespace NN
 
         public void CreateGen()
         {
+            List<Pig.Player> newPlayers = new List<Pig.Player>();
+
+            Players.Sort((a, b) => b.fitness.CompareTo(a.fitness));
+
+            double totalSqrtFitness = 0;
+            totalSqrtFitness = Players.Sum(x => Math.Pow(x.fitness, genPlayerFitScale));
+
+            newPlayers.Add(Players[0]);
+            newPlayers.Add(Players[1]);
+            newPlayers.Add(Players[2]);
+
+            for (int i = 3; i < Players.Count; i++)
+            {
+                Pig.Player cross1 = GetRandomMember(totalSqrtFitness);
+                Pig.Player cross2 = GetRandomMember(totalSqrtFitness, cross1);
+
+                Pig.Player newPlayer = new Pig.Player(cross1, cross2);
+                newPlayers.Add(newPlayer);
+            }
+
+            Players = newPlayers; //copy over new players
+
+            //for (int i = 0; i < _numberPerGeneration; i++)
+            //{
+            //    NeuralNet ai = new NeuralNet(_inputCount, _hiddenLayerCount, _hiddenLayerSize, _outputCount);
+            //    Players.Add(new Pig.Player(ai));
+            //}                       
+
             
+        }
+       
+        public Pig.Player GetRandomMember(double totalSqrtFitness, Pig.Player exclusion = null)
+        {
+            Random memberGen = new Random(Guid.NewGuid().GetHashCode());
+            double randomVal = memberGen.NextDouble() * totalSqrtFitness;
+
+            foreach(Pig.Player player in Players)
+            {
+                double currentFit = Math.Pow(player.fitness, genPlayerFitScale); 
+
+                if (player == exclusion)
+                    continue;
+
+                if(randomVal < currentFit)
+                {
+                    return player;
+                }
+
+                randomVal -= currentFit;
+            }
+
+            return Players[-1]; //this will crash and mean that something went wrong- however it should never in theory
         }
 
         public void PlayGame()
@@ -35,6 +102,7 @@ namespace NN
             if (versusIndex >= Players.Count)
             {
                 playerIndex++;
+                versusIndex = 0;
             }
 
             if (playerIndex >= Players.Count)
@@ -48,14 +116,14 @@ namespace NN
                 //get two players
                 Pig.Pig game = new Pig.Pig(p1, p2);
 
-                while (!game.hasEnded)
+                while (!game.hasEnded && game.roundCount < 200)
                 {
                     game.PlayRound();
                 }
 
                 game.CalculateFitness();
             }
-        }   
+        }
     }
 
     internal class NeuralNet
@@ -98,11 +166,11 @@ namespace NN
         public NeuralNet(NeuralNet network1, NeuralNet network2)
         {
             //crossover
-            
+
             _inputLayer = new Layer(network1._inputLayer, network2._inputLayer);
-            for (int i = 0; i < _hiddenLayers.Count; i++)
+            for (int i = 0; i < network1._hiddenLayers.Count; i++)
             {
-                _hiddenLayers[i] = new Layer(network1._hiddenLayers[i], network2._hiddenLayers[i]);
+                _hiddenLayers.Add(new Layer(network1._hiddenLayers[i], network2._hiddenLayers[i]));
             }
             _outputLayer = new Layer(network1._outputLayer, network2._outputLayer);
         }
@@ -139,11 +207,6 @@ namespace NN
 
             return layerOutput;
         }
-
-        private double Tanh(double input)
-        {
-            return 1 / (1 + Math.Pow(2.71828, -1 * input));
-        }
     }
 
     internal class Layer
@@ -169,16 +232,16 @@ namespace NN
         {
             _inputNeuronCount = layer1._inputNeuronCount;
             _neuronCount = layer1._neuronCount;
-
-            List<Neuron> _neurons = new List<Neuron>(_neuronCount);
+            
+            List<Neuron> _neurons = new List<Neuron>();
             Random weightGen = new Random();
             for (int i = 0; i < _neuronCount; i++)
             {
                 double randomNeuron = weightGen.NextDouble();
                 if (randomNeuron > 0.5) // neuron 1 if greater than 50%
-                    _neurons[i] = new Neuron(layer1._neurons[i]);
+                    _neurons.Add(new Neuron(layer1._neurons[i]));
                 else
-                    _neurons[i] = new Neuron(layer2._neurons[i]);
+                    _neurons.Add(new Neuron(layer2._neurons[i]));
             }
         }
 
@@ -221,7 +284,7 @@ namespace NN
         {
             Random weightGen = new Random(Guid.NewGuid().GetHashCode());
 
-            _weights = Enumerable.Range(1, inputWeights).Select(i => weightGen.NextDouble() * 0.1).ToList();
+            _weights = Enumerable.Range(1, inputWeights).Select(i => weightGen.NextDouble() * 2 - 1).ToList();
         }
 
         /// <summary>
@@ -237,13 +300,23 @@ namespace NN
         {
             Random randomGen = new Random();
 
-            for(int i = 0; i < _weights.Count; i++)
+            for (int i = 0; i < _weights.Count; i++)
             {
-                if(randomGen.NextDouble() < mutateRate)
+                if (randomGen.NextDouble() < mutateRate)
                 {
                     _weights[i] = randomGen.NextDouble();
                 }
             }
+        }
+
+        public static double Sigmoid(double input)
+        {
+            return 1 / (1 + Math.Pow(Math.E, -input));
+        }
+
+        public static double Tanh(double input)
+        {
+            return 2 / (1 + Math.Pow(Math.E, -2 * input)) - 1;
         }
 
 
@@ -257,7 +330,8 @@ namespace NN
                 output += _weights[i] * inputs[i];
             }
 
-            return output;
+            double activated = Tanh(output);
+            return activated;
         }
     }
 }
