@@ -78,8 +78,8 @@ namespace Pig
             if (_hasEnded)
                 _winnerPlayer.gameFitness += 50;
 
-            _player1.fitness += _player1.gameFitness;
-            _player2.fitness += _player2.gameFitness;
+            _player1.totalFitness += _player1.gameFitness;
+            _player2.totalFitness += _player2.gameFitness;
         }
 
         public void SwitchTurn(Player currentPlayer, Player otherPlayer)
@@ -100,8 +100,10 @@ namespace Pig
         public int _score = 0;
         public int _roundScore = 0;
         public bool IsTurn = false;
-        public double fitness = 100;
+        public double totalFitness = 100;
+        public double averageFitness = 0;
         public double gameFitness = 0;
+        public double gameCount = 0;
 
         public NN.NeuralNet net;
 

@@ -11,8 +11,6 @@ namespace NN
         public int playerIndex = 0; //count through each player
         public int versusIndex = 0; //count through each versus player
 
-        public int currentPlayerIndex = 0;
-
         //input parameters 
         public int _numberPerGeneration = 0;
         public int _inputCount = 0;
@@ -41,11 +39,14 @@ namespace NN
         public void CreateGen()
         {
             List<Pig.Player> newPlayers = new List<Pig.Player>();
-
-            Players.Sort((a, b) => b.fitness.CompareTo(a.fitness));
+            foreach (Pig.Player player in Players)
+            {
+                player.averageFitness = player.totalFitness / player.gameCount;
+            }
+            Players.Sort((a, b) => b.averageFitness.CompareTo(a.averageFitness));
 
             double totalSqrtFitness = 0;
-            totalSqrtFitness = Players.Sum(x => Math.Pow(x.fitness, genPlayerFitScale));
+            totalSqrtFitness = Players.Sum(x => Math.Pow(x.averageFitness, genPlayerFitScale));
 
             newPlayers.Add(Players[0]);
             newPlayers.Add(Players[1]);
@@ -54,7 +55,8 @@ namespace NN
             for (int i = 3; i < Players.Count; i++)
             {
                 Pig.Player cross1 = GetRandomMember(totalSqrtFitness);
-                Pig.Player cross2 = GetRandomMember(totalSqrtFitness, cross1);
+                //Pig.Player cross2 = GetRandomMember(totalSqrtFitness - Math.Pow(cross1.averageFitness, genPlayerFitScale), cross1);
+                Pig.Player cross2 = GetRandomMember(totalSqrtFitness);
 
                 Pig.Player newPlayer = new Pig.Player(cross1, cross2);
                 newPlayers.Add(newPlayer);
@@ -68,22 +70,25 @@ namespace NN
             //    Players.Add(new Pig.Player(ai));
             //}                       
 
-            
+
         }
-       
+
         public Pig.Player GetRandomMember(double totalSqrtFitness, Pig.Player exclusion = null)
         {
+            if (exclusion != null)
+                totalSqrtFitness -= Math.Pow(exclusion.averageFitness, genPlayerFitScale);
+
             Random memberGen = new Random(Guid.NewGuid().GetHashCode());
             double randomVal = memberGen.NextDouble() * totalSqrtFitness;
 
-            foreach(Pig.Player player in Players)
+            foreach (Pig.Player player in Players)
             {
-                double currentFit = Math.Pow(player.fitness, genPlayerFitScale); 
+                double currentFit = Math.Pow(player.averageFitness, genPlayerFitScale);
 
                 if (player == exclusion)
                     continue;
 
-                if(randomVal < currentFit)
+                if (randomVal < currentFit)
                 {
                     return player;
                 }
@@ -106,7 +111,13 @@ namespace NN
             }
 
             if (playerIndex >= Players.Count)
+            {
                 CreateGen();
+                currentGen++;
+                versusIndex = 0;
+                playerIndex = 0;
+
+            }
             else
             {
                 Pig.Player p1 = Players[playerIndex];
@@ -118,9 +129,12 @@ namespace NN
 
                 while (!game.hasEnded && game.roundCount < 200)
                 {
+                    //breaks here
                     game.PlayRound();
                 }
 
+                p1.gameCount++;
+                p2.gameCount++;
                 game.CalculateFitness();
             }
         }
@@ -139,6 +153,7 @@ namespace NN
         /// </summary>
         public NeuralNet()
         {
+            _hiddenLayers = new List<Layer>();
         }
 
         public NeuralNet(NeuralNet copyNet)
@@ -163,11 +178,12 @@ namespace NN
         /// </summary>
         /// <param name="n1"></param>
         /// <param name="n2"></param>
-        public NeuralNet(NeuralNet network1, NeuralNet network2)
+        public NeuralNet(NeuralNet network1, NeuralNet network2) : this()
         {
             //crossover
 
             _inputLayer = new Layer(network1._inputLayer, network2._inputLayer);
+
             for (int i = 0; i < network1._hiddenLayers.Count; i++)
             {
                 _hiddenLayers.Add(new Layer(network1._hiddenLayers[i], network2._hiddenLayers[i]));
@@ -232,7 +248,7 @@ namespace NN
         {
             _inputNeuronCount = layer1._inputNeuronCount;
             _neuronCount = layer1._neuronCount;
-            
+
             List<Neuron> _neurons = new List<Neuron>();
             Random weightGen = new Random();
             for (int i = 0; i < _neuronCount; i++)
