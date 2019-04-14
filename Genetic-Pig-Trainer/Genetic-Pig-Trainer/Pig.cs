@@ -5,14 +5,14 @@ namespace Pig
 {
     internal class Pig
     {
+        public int maxTurns = 200;
         public bool hasEnded = false;
-        public int roundCount = 0;
+        public int turnCount = 0;
         public Player _player1;
         public Player _player2;
         private Player _currentPlayer;
         private Player _otherPlayer;
         private Player _winnerPlayer;
-        private bool _hasEnded = false;
 
         public Pig(Player player1, Player player2)
         {
@@ -25,7 +25,7 @@ namespace Pig
 
         public void PlayRound()
         {
-            roundCount++;
+            turnCount++;
             double toRoll = _currentPlayer.RollDecision(_otherPlayer._score, _otherPlayer._roundScore)[0];
 
             if (toRoll > 0)
@@ -41,6 +41,7 @@ namespace Pig
         public void RollRound(Player currentPlayer, Player otherPlayer)
         {
             Random dieGen = new Random(Guid.NewGuid().GetHashCode());
+            //Random dieGen = new Random(1);
             int roll = dieGen.Next(1, 7);
 
             if (roll == 1)
@@ -59,7 +60,7 @@ namespace Pig
             currentPlayer._score += currentPlayer._roundScore;
             if (currentPlayer._score >= 100)
             {
-                _hasEnded = true;
+                hasEnded = true;
                 currentPlayer._score = 100;
                 _winnerPlayer = currentPlayer;
             }
@@ -75,8 +76,13 @@ namespace Pig
             _player1.gameFitness += _player1._score;
             _player2.gameFitness += _player2._score;
 
-            if (_hasEnded)
+            if (hasEnded)
+            {
                 _winnerPlayer.gameFitness += 50;
+                if (this.turnCount != 200)
+                    hasEnded = true;
+                _winnerPlayer.gameFitness += this.maxTurns - this.turnCount;
+            }
 
             _player1.totalFitness += _player1.gameFitness;
             _player2.totalFitness += _player2.gameFitness;
@@ -135,6 +141,11 @@ namespace Pig
             outputs = net.ComputeLayers(inputDouble);
 
             return outputs;
+        }
+
+        public void Mutate()
+        {
+            net.Mutate();
         }
     }
 }

@@ -37,7 +37,9 @@ namespace Genetic_Pig_Trainer
         {
             timer.Stop();
             count++;
-            CountLbl.Content = count;
+            CountLbl.Content = "Game: " + count;
+            GenLbl.Content = "Gen: " + aiGeneration.currentGen;
+            FitLbl.Content = "Max Fitness: " + aiGeneration.maxFitness;
             //do move
             aiGeneration.PlayGame();
 
