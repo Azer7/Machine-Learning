@@ -28,13 +28,22 @@ namespace Genetic_Pig_Trainer
         int count = 0;
 
         //NN.Generation aiGeneration = new NN.Generation(10, 3, 3, 5, 1);
-        NN.Generation aiGeneration = new NN.Generation(40, 3, 4, 7, 1);
+        NN.Generation aiGeneration;
+        Random rndGen;
+
 
         public MainWindow()
         {
             InitializeComponent();
             timer.Tick += new EventHandler(timer_Tick);
             timer.Interval = new TimeSpan(0, 0, 0, 0, 10);
+
+
+            rndGen = new Random();
+            Pig.RndGen.rnd = rndGen;
+            NN.RndGen.rnd = rndGen;
+
+            aiGeneration = new NN.Generation(20, 40, 2, 1, 1, 1);
         }
 
         public void timer_Tick(object sender, EventArgs e)
@@ -45,7 +54,7 @@ namespace Genetic_Pig_Trainer
             GenLbl.Content = "Gen: " + aiGeneration.currentGen;
             FitLbl.Content = "Max Fitness: " + aiGeneration.maxFitness;
             //do move
-            for (int i = 0; i < 10000; i++)
+            for (int i = 0; i < 2000; i++)
                 aiGeneration.PlayGame();
 
 
@@ -79,7 +88,10 @@ namespace Genetic_Pig_Trainer
                 var serializer = new XmlSerializer(aiGeneration.Players[0].GetType(), types);
                 serializer.Serialize(stringwriter, aiGeneration.Players[0]);
 
-                File.WriteAllText("bestPlayer.dat", stringwriter.ToString());
+                string writeString = stringwriter.ToString();
+                writeString = writeString.Replace("encoding=\"utf-16\"", "");
+
+                File.WriteAllText("bestPlayer.dat", writeString);
             }
         }
 
@@ -92,17 +104,31 @@ namespace Genetic_Pig_Trainer
 
             FileStream openFile = new FileStream("basePlayer.dat", FileMode.Open);
 
-
+            Pig.Player tempPlayer;
+            try
+            {
+                tempPlayer = (Pig.Player)deserializer.Deserialize(openFile);
+            }
+            catch (Exception err)
+            {
+                System.Windows.Forms.MessageBox.Show(err.Message);
+                throw;
+            }
             //creation of two players
-            Pig.Player tempPlayer = (Pig.Player)deserializer.Deserialize(openFile);
+            
+            openFile.Close();
 
             aiPlayer = new Pig.Player(tempPlayer);
             Pig.Player bestCurrentPlayer = new Pig.Player(aiGeneration.Players[0]);
 
-            for(int i = 0; i < 100000; i++)
+            for (int i = 0; i < 5000; i++)
             {
                 //get two players
-                Pig.Pig game = new Pig.Pig(aiPlayer, bestCurrentPlayer);
+                Pig.Pig game;
+                if (rndGen.NextDouble() > 0.5) // to change who is starting player
+                    game = new Pig.Pig(aiPlayer, bestCurrentPlayer);
+                else
+                    game = new Pig.Pig(bestCurrentPlayer, aiPlayer);
 
                 while (!game.hasEnded && game.turnCount < game.maxTurns)
                 {
@@ -116,7 +142,8 @@ namespace Genetic_Pig_Trainer
                 game.CalculateFitness();
             }
 
-            baseLbl.Content = bestCurrentPlayer.totalFitness;
+            //ratio of fitness of bestplayer to otherplayer
+            baseLbl.Content = bestCurrentPlayer.totalFitness / aiPlayer.totalFitness;
         }
     }
 }

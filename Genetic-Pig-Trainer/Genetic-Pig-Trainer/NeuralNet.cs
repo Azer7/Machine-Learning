@@ -12,6 +12,13 @@ namespace NN
     internal static class Constants
     {
         public static int debugGen = 0;
+        public static double mutationRate = 0.1;
+    }
+
+    internal static class RndGen
+    {
+        //public static Random rnd = new Random(); 
+        public static Random rnd;
     }
 
     [Serializable]
@@ -21,6 +28,9 @@ namespace NN
         public List<Pig.Player> Players = new List<Pig.Player>();        
         public int playerIndex = 0; //count through each player
         public int versusIndex = 0; //count through each versus player
+        public int _currentGenIteration = 0;
+        public int _iterationsPerGeneration = 0;
+
         //debug info
         public double maxFitness = 0;
 
@@ -40,9 +50,11 @@ namespace NN
 
         }
 
-        public Generation(int numberPerGeneration, int inputCount, int hiddenLayerCount, int hiddenLayerSize, int outputCount)
+        public Generation(int numberPerGeneration, int iterationsPerGeneration, int inputCount, int hiddenLayerCount, int hiddenLayerSize, int outputCount)
         {
+
             _numberPerGeneration = numberPerGeneration;
+            _iterationsPerGeneration = iterationsPerGeneration;
             _inputCount = inputCount;
             _hiddenLayerCount = hiddenLayerCount;
             _hiddenLayerSize = hiddenLayerSize;
@@ -93,7 +105,7 @@ namespace NN
                 Pig.Player cross2 = GetRandomMember(totalSqrtFitness);
 
                 Pig.Player newPlayer = new Pig.Player(cross1, cross2);
-                newPlayer.Mutate();
+                newPlayer.Mutate(Constants.mutationRate);
                 newPlayers.Add(newPlayer);
             }
 
@@ -105,7 +117,7 @@ namespace NN
             if (exclusion != null)
                 totalSqrtFitness -= Math.Pow(exclusion.averageFitness, genPlayerFitScale);
 
-            Random memberGen = new Random(Guid.NewGuid().GetHashCode());
+            Random memberGen = RndGen.rnd;
             //Random memberGen = new Random(1);
             double randomVal = memberGen.NextDouble() * totalSqrtFitness;
 
@@ -140,11 +152,22 @@ namespace NN
 
             if (playerIndex >= Players.Count)
             {
-                CreateGen();
-                currentGen++;
-                versusIndex = 0;
-                playerIndex = 0;
-
+                if (_currentGenIteration < _iterationsPerGeneration)
+                {
+                    //resets player
+                    versusIndex = 0;
+                    playerIndex = 0;
+                    _currentGenIteration++;
+                }
+                else
+                {
+                    //reset generation
+                    _currentGenIteration = 0;
+                    versusIndex = 0;
+                    playerIndex = 0;
+                    CreateGen();
+                    currentGen++;
+                }
             }
             else
             {
@@ -229,7 +252,7 @@ namespace NN
         /// <returns></returns>
         public void Mutate(double mutateRate = 0.01)
         {
-            Random mutateGen = new Random();
+            Random mutateGen = RndGen.rnd;
             //Random mutateGen = new Random(1);
 
             _inputLayer.Mutate(mutateRate);
@@ -288,7 +311,7 @@ namespace NN
             _neuronCount = layer1._neuronCount;
 
             _neurons = new List<Neuron>();
-            Random weightGen = new Random();
+            Random weightGen = RndGen.rnd;
             //Random weightGen = new Random(1);
             for (int i = 0; i < _neuronCount; i++)
             {
@@ -339,7 +362,7 @@ namespace NN
 
         public Neuron(int inputWeights)
         {
-            Random weightGen = new Random(Guid.NewGuid().GetHashCode());
+            Random weightGen = RndGen.rnd;
             //Random weightGen = new Random(1);
 
             _weights = Enumerable.Range(1, inputWeights).Select(i => weightGen.NextDouble() * 2 - 1).ToList();
@@ -377,7 +400,7 @@ namespace NN
 
         public void Mutate(double mutateRate = 0.01)
         {
-            Random randomGen = new Random();
+            Random randomGen = RndGen.rnd;
             //Random randomGen = new Random(1);
 
             for (int i = 0; i < _weights.Count; i++)

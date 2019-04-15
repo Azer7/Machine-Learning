@@ -1,0 +1,39 @@
+<?xml version="1.0" ?>
+<Player xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <_score>0</_score>
+  <_roundScore>0</_roundScore>
+  <IsTurn>false</IsTurn>
+  <totalFitness>225816</totalFitness>
+  <averageFitness>0</averageFitness>
+  <gameFitness>72</gameFitness>
+  <gameCount>781</gameCount>
+  <net>
+    <_inputLayer>
+      <_inputNeuronCount>2</_inputNeuronCount>
+      <_neuronCount>1</_neuronCount>
+      <_neurons>
+        <Neuron>
+          <_weights>
+            <double>-0.301882506954429</double>
+            <double>0.007918408609888683</double>
+            <double>0.99357843864410111</double>
+          </_weights>
+        </Neuron>
+      </_neurons>
+    </_inputLayer>
+    <_hiddenLayers />
+    <_outputLayer>
+      <_inputNeuronCount>1</_inputNeuronCount>
+      <_neuronCount>1</_neuronCount>
+      <_neurons>
+        <Neuron>
+          <_weights>
+            <double>0.91751717585954684</double>
+            <double>0.91605837266708645</double>
+          </_weights>
+        </Neuron>
+      </_neurons>
+    </_outputLayer>
+    <Fitness>0</Fitness>
+  </net>
+</Player>

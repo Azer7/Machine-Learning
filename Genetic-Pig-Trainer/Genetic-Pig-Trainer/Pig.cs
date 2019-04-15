@@ -4,6 +4,13 @@ using System.Xml;
 using System.Xml.Serialization;
 namespace Pig
 {
+    public static class RndGen
+    {
+        //public static Random rnd = new Random();
+        public static Random rnd;
+    }
+
+
 
     public class Pig
     {
@@ -42,7 +49,7 @@ namespace Pig
 
         public void RollRound(Player currentPlayer, Player otherPlayer)
         {
-            Random dieGen = new Random(Guid.NewGuid().GetHashCode());
+            Random dieGen = RndGen.rnd;
             //Random dieGen = new Random(1);
             int roll = dieGen.Next(1, 7);
 
@@ -78,8 +85,16 @@ namespace Pig
             _player1.gameFitness += _player1._score;
             _player2.gameFitness += _player2._score;
 
+            
             if (hasEnded)
             {
+                //add fitness to greater score difference
+                if (_winnerPlayer == _player1)
+                    _winnerPlayer.gameFitness += _winnerPlayer._score - _player2._score;
+                else
+                    _winnerPlayer.gameFitness += _winnerPlayer._score - _player1._score;
+
+
                 _winnerPlayer.gameFitness += 50;
                 if (this.turnCount != 200)
                     hasEnded = true;
@@ -88,6 +103,13 @@ namespace Pig
 
             _player1.totalFitness += _player1.gameFitness;
             _player2.totalFitness += _player2.gameFitness;
+
+
+
+            _player1._roundScore = 0;
+            _player2._roundScore = 0;
+            _player1._score = 0;
+            _player2._score = 0;
         }
 
         public void SwitchTurn(Player currentPlayer, Player otherPlayer)
@@ -142,8 +164,9 @@ namespace Pig
         public List<double> RollDecision(int otherScore)
         {
             List<double> outputs;
+            int scoreDifference = otherScore - _score;
 
-            List<int> input = new List<int> { _score, _roundScore, otherScore };
+            List<int> input = new List<int> { _roundScore, scoreDifference };
             List<double> inputDouble = input.ConvertAll(x => (double)x);
 
             outputs = net.ComputeLayers(inputDouble);
@@ -151,9 +174,9 @@ namespace Pig
             return outputs;
         }
 
-        public void Mutate()
+        public void Mutate(double mutationRate)
         {
-            net.Mutate();
+            net.Mutate(mutationRate);
         }
     }
 }

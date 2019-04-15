@@ -142,8 +142,10 @@ namespace Pig
         public List<double> RollDecision(int otherScore)
         {
             List<double> outputs;
+            int scoreDifference = otherScore - _score;
 
-            List<int> input = new List<int> { _score, _roundScore, otherScore };
+            List<int> input = new List<int> { _roundScore, scoreDifference };
+
             List<double> inputDouble = input.ConvertAll(x => (double)x);
 
             outputs = net.ComputeLayers(inputDouble);
