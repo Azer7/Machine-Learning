@@ -83,7 +83,7 @@ namespace Pig
                 _winnerPlayer.gameFitness += 50;
                 if (this.turnCount != 200)
                     hasEnded = true;
-                _winnerPlayer.gameFitness += 2 * (this.maxTurns - this.turnCount);
+                _winnerPlayer.gameFitness += this.maxTurns - this.turnCount;
             }
 
             _player1.totalFitness += _player1.gameFitness;
@@ -116,7 +116,7 @@ namespace Pig
 
         public NN.NeuralNet net;
 
-        private Player()
+        public Player()
         {
 
         }

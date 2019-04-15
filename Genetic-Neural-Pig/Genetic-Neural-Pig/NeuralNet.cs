@@ -4,11 +4,11 @@ using System.Linq;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
-
-
+using System.Runtime.Serialization;
 
 namespace NN
 {
+
     internal static class Constants
     {
         public static int debugGen = 0;
@@ -72,19 +72,6 @@ namespace NN
             newPlayers.Add(new Pig.Player(Players[0]));
             newPlayers.Add(new Pig.Player(Players[1]));
             newPlayers.Add(new Pig.Player(Players[2]));
-
-
-            using (var stringwriter = new System.IO.StringWriter())
-            {
-                Type[] types = new Type[3];
-                types[0] = typeof(NN.NeuralNet);
-                types[1] = typeof(NN.Neuron);
-                types[2] = typeof(NN.Layer);
-                var serializer = new XmlSerializer(Players[0].GetType(), types);
-                serializer.Serialize(stringwriter, Players[0]);
-
-                File.WriteAllText("bestPlayer.dat", stringwriter.ToString());
-            }
 
             for (int i = 3; i < Players.Count; i++)
             {
@@ -174,7 +161,7 @@ namespace NN
     public class NeuralNet
     {
         public Layer _inputLayer;
-        public List<Layer> _hiddenLayers = new List<Layer>();
+        public List<Layer> _hiddenLayers= new List<Layer>();
         public Layer _outputLayer;
 
         public double Fitness = 0;
@@ -262,7 +249,7 @@ namespace NN
     {
         public int _inputNeuronCount;
         public int _neuronCount;
-        public List<Neuron> _neurons = new List<Neuron>();
+        public List<Neuron> _neurons= new List<Neuron>();
 
         private Layer()
         {

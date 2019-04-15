@@ -5,11 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Genetic_Pig_Trainer"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Pig Trainer" Height="450" Width="800">
     <Grid>
         <Button x:Name="toggleStartBtn" Content="Run" HorizontalAlignment="Left" Margin="340,295,0,0" VerticalAlignment="Top" Width="85" Height="45" Click="ToggleStartBtn_Click"/>
         <Label x:Name="CountLbl" Content="Game: 0" HorizontalAlignment="Left" Margin="365,120,0,0" VerticalAlignment="Top"/>
         <Label x:Name="FitLbl" Content="Max Fitness: " HorizontalAlignment="Left" Margin="325,179,0,0" VerticalAlignment="Top"/>
         <Label x:Name="GenLbl" Content="Gen: 0" HorizontalAlignment="Left" Margin="365,151,0,0" VerticalAlignment="Top"/>
+        <Button x:Name="saveBtn" Content="Save Player" HorizontalAlignment="Left" Margin="100,340,0,0" VerticalAlignment="Top" Width="75" Click="SaveBtn_Click"/>
     </Grid>
 </Window>
