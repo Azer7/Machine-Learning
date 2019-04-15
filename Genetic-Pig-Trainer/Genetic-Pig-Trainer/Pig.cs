@@ -116,7 +116,7 @@ namespace Pig
 
         public NN.NeuralNet net;
 
-        private Player()
+        public Player()
         {
 
         }

@@ -18,7 +18,7 @@ namespace NN
     public class Generation
     {
         public int currentGen = 0;
-        public List<Pig.Player> Players = new List<Pig.Player>();
+        public List<Pig.Player> Players = new List<Pig.Player>();        
         public int playerIndex = 0; //count through each player
         public int versusIndex = 0; //count through each versus player
         //debug info
@@ -69,24 +69,24 @@ namespace NN
 
             maxFitness = Players[0].averageFitness;
 
-            newPlayers.Add(new Pig.Player(Players[0]));
-            newPlayers.Add(new Pig.Player(Players[1]));
-            newPlayers.Add(new Pig.Player(Players[2]));
+            for (int i = 0; i < 10; i++)
+                newPlayers.Add(new Pig.Player(Players[i]));
 
 
-            using (var stringwriter = new System.IO.StringWriter())
-            {
-                Type[] types = new Type[3];
-                types[0] = typeof(NN.NeuralNet);
-                types[1] = typeof(NN.Neuron);
-                types[2] = typeof(NN.Layer);
-                var serializer = new XmlSerializer(Players[0].GetType(), types);
-                serializer.Serialize(stringwriter, Players[0]);
 
-                File.WriteAllText("bestPlayer.dat", stringwriter.ToString());
-            }
+            //using (var stringwriter = new System.IO.StringWriter())
+            //{
+            //    Type[] types = new Type[3];
+            //    types[0] = typeof(NN.NeuralNet);
+            //    types[1] = typeof(NN.Neuron);
+            //    types[2] = typeof(NN.Layer);
+            //    var serializer = new XmlSerializer(Players[0].GetType(), types);
+            //    serializer.Serialize(stringwriter, Players[0]);
 
-            for (int i = 3; i < Players.Count; i++)
+            //    File.WriteAllText("bestPlayer.dat", stringwriter.ToString());
+            //}
+
+            for (int i = 10; i < Players.Count; i++)
             {
                 Pig.Player cross1 = GetRandomMember(totalSqrtFitness);
                 //Pig.Player cross2 = GetRandomMember(totalSqrtFitness - Math.Pow(cross1.averageFitness, genPlayerFitScale), cross1);
