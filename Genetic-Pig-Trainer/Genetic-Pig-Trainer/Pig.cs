@@ -85,7 +85,7 @@ namespace Pig
             _player1.gameFitness += _player1._score;
             _player2.gameFitness += _player2._score;
 
-            
+
             if (hasEnded)
             {
                 //add fitness to greater score difference
@@ -165,8 +165,12 @@ namespace Pig
         {
             List<double> outputs;
             int scoreDifference = otherScore - _score;
+            List<int> input = new List<int>();
+            if (net._inputLayer._inputNeuronCount == 3)
+                input = new List<int> { _roundScore, _score, scoreDifference };
+            else if (net._inputLayer._inputNeuronCount == 2)
+                input = new List<int> { _roundScore, scoreDifference };
 
-            List<int> input = new List<int> { _roundScore, scoreDifference };
             List<double> inputDouble = input.ConvertAll(x => (double)x);
 
             outputs = net.ComputeLayers(inputDouble);
