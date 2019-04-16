@@ -16,6 +16,7 @@ using System.Windows.Threading;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
+using System.Threading;
 
 namespace Genetic_Pig_Trainer
 {
@@ -43,7 +44,7 @@ namespace Genetic_Pig_Trainer
             Pig.RndGen.rnd = rndGen;
             NN.RndGen.rnd = rndGen;
 
-            aiGeneration = new NN.Generation(20, 40, 2, 1, 1, 1);
+            aiGeneration = new NN.Generation(20, 30, 3, 1, 7, 1);
         }
 
         public void timer_Tick(object sender, EventArgs e)
@@ -54,8 +55,13 @@ namespace Genetic_Pig_Trainer
             GenLbl.Content = "Gen: " + aiGeneration.currentGen;
             FitLbl.Content = "Max Fitness: " + aiGeneration.maxFitness;
             //do move
-            for (int i = 0; i < 2000; i++)
+
+            //aiGeneration.playGen();
+
+            for(int i = 0; i < 5000; i++)
+            {
                 aiGeneration.PlayGame();
+            }
 
 
             timer.Start();
@@ -121,7 +127,7 @@ namespace Genetic_Pig_Trainer
             aiPlayer = new Pig.Player(tempPlayer);
             Pig.Player bestCurrentPlayer = new Pig.Player(aiGeneration.Players[0]);
 
-            for (int i = 0; i < 5000; i++)
+            for (int i = 0; i < 10000; i++)
             {
                 //get two players
                 Pig.Pig game;

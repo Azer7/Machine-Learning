@@ -3,10 +3,10 @@
   <_score>0</_score>
   <_roundScore>0</_roundScore>
   <IsTurn>false</IsTurn>
-  <totalFitness>168096</totalFitness>
+  <totalFitness>154773</totalFitness>
   <averageFitness>0</averageFitness>
-  <gameFitness>0</gameFitness>
-  <gameCount>1160</gameCount>
+  <gameFitness>71</gameFitness>
+  <gameCount>607</gameCount>
   <net>
     <_inputLayer>
       <_inputNeuronCount>2</_inputNeuronCount>
@@ -14,9 +14,9 @@
       <_neurons>
         <Neuron>
           <_weights>
-            <double>-0.68802343666927124</double>
-            <double>-0.59196228142453466</double>
-            <double>0.82879678571075055</double>
+            <double>0.10139509853971894</double>
+            <double>0.020641567195133104</double>
+            <double>0.028276585055643965</double>
           </_weights>
         </Neuron>
       </_neurons>
@@ -28,8 +28,8 @@
       <_neurons>
         <Neuron>
           <_weights>
-            <double>0.50560570345521239</double>
-            <double>0.47359110949262573</double>
+            <double>-0.47913455007557504</double>
+            <double>0.44719807405359946</double>
           </_weights>
         </Neuron>
       </_neurons>

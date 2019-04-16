@@ -4,7 +4,7 @@ using System.Linq;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
-
+using System.Threading;
 
 
 namespace NN
@@ -191,7 +191,82 @@ namespace NN
                 game.CalculateFitness();
             }
         }
+
+        public void playGen()
+        {
+            for (int i = 0; i < 1; i++)
+            {
+                List<Thread> threads = new List<Thread>();
+
+                for (int gen = 0; gen < _iterationsPerGeneration; gen++)
+                {
+                    //new thread for each generation
+                    threads.Add(new Thread(PlayGenIteration));
+                    threads[gen].Priority = ThreadPriority.AboveNormal;
+                    threads[gen].Start();
+                }
+
+                foreach (Thread thread in threads)
+                {
+                    thread.Join();
+                }
+
+                CreateGen();
+                currentGen++;
+                //aiGeneration.PlayGame();
+
+
+            }
+        }
+
+        public void PlayGenIteration()
+        {
+            int playerIndex = 0;
+            int versusIndex = 0;
+
+            while (true)
+            {
+                if (versusIndex == playerIndex)
+                    versusIndex++;
+
+                if (versusIndex >= Players.Count)
+                {
+                    playerIndex++;
+                    versusIndex = 0;
+                }
+
+                if (playerIndex >= Players.Count)
+                {
+                    Thread.CurrentThread.Abort();
+
+                    //done the work end thread
+                }
+                else
+                {
+                    Pig.Player p1 = Players[playerIndex];
+                    Pig.Player p2 = Players[versusIndex];
+                    versusIndex++;
+
+                    //get two players
+                    Pig.Pig game = new Pig.Pig(p1, p2);
+
+                    while (!game.hasEnded && game.turnCount < game.maxTurns)
+                    {
+                        //breaks here
+                        game.PlayRound();
+                        Constants.debugGen++;
+
+                    }
+
+                    p1.gameCount++;
+                    p2.gameCount++;
+                    game.CalculateFitness();
+                }
+            }
+        }
     }
+
+
 
     [Serializable]
     public class NeuralNet
