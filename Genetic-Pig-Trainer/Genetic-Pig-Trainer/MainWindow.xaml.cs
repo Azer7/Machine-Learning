@@ -44,7 +44,7 @@ namespace Genetic_Pig_Trainer
             Pig.RndGen.rnd = rndGen;
             NN.RndGen.rnd = rndGen;
 
-            aiGeneration = new NN.Generation(20, 30, 3, 1, 7, 1);
+            aiGeneration = new NN.Generation(20, 10, 3, 1, 1, 1);
         }
 
         public void timer_Tick(object sender, EventArgs e)
@@ -60,9 +60,13 @@ namespace Genetic_Pig_Trainer
 
             for(int i = 0; i < 5000; i++)
             {
-                aiGeneration.PlayGame();
+                aiGeneration.PlayGame();                
             }
 
+            if (aiGeneration.currentGen % 50 == 0)
+            {
+                CalcBaseline();
+            }
 
             timer.Start();
             //wait a ms or two or 5
@@ -101,7 +105,7 @@ namespace Genetic_Pig_Trainer
             }
         }
 
-        private void BaselineBtn_Click(object sender, RoutedEventArgs e)
+        private void CalcBaseline()
         {
             Pig.Player humanPlayer = new Pig.Player();
             XmlSerializer deserializer = new XmlSerializer(typeof(Pig.Player));
@@ -121,7 +125,7 @@ namespace Genetic_Pig_Trainer
                 throw;
             }
             //creation of two players
-            
+
             openFile.Close();
 
             aiPlayer = new Pig.Player(tempPlayer);
@@ -150,6 +154,11 @@ namespace Genetic_Pig_Trainer
 
             //ratio of fitness of bestplayer to otherplayer
             baseLbl.Content = bestCurrentPlayer.totalFitness / aiPlayer.totalFitness;
+        }
+
+        private void BaselineBtn_Click(object sender, RoutedEventArgs e)
+        {
+            CalcBaseline();
         }
     }
 }
