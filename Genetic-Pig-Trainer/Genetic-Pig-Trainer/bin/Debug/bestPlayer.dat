@@ -3,34 +3,88 @@
   <_score>0</_score>
   <_roundScore>0</_roundScore>
   <IsTurn>true</IsTurn>
-  <totalFitness>238242</totalFitness>
+  <totalFitness>332302</totalFitness>
   <averageFitness>0</averageFitness>
-  <gameFitness>433</gameFitness>
-  <gameCount>860</gameCount>
+  <gameFitness>440</gameFitness>
+  <gameCount>1139</gameCount>
   <net>
     <_inputLayer>
       <_inputNeuronCount>3</_inputNeuronCount>
-      <_neuronCount>1</_neuronCount>
+      <_neuronCount>7</_neuronCount>
       <_neurons>
         <Neuron>
           <_weights>
-            <double>0.13951015246077914</double>
-            <double>0.0065278513387440947</double>
-            <double>0.0023970911290483042</double>
-            <double>-0.346470674195546</double>
+            <double>0.844704871459261</double>
+            <double>0.93026552113251082</double>
+            <double>0.81329485811912217</double>
+            <double>0.60850662812986722</double>
+          </_weights>
+        </Neuron>
+        <Neuron>
+          <_weights>
+            <double>0.48403580974975408</double>
+            <double>0.77873588389658177</double>
+            <double>0.736622876830689</double>
+            <double>0.16706880282939821</double>
+          </_weights>
+        </Neuron>
+        <Neuron>
+          <_weights>
+            <double>0.69456135886468051</double>
+            <double>0.99530674190973245</double>
+            <double>0.0698026120987733</double>
+            <double>0.18374624996620523</double>
+          </_weights>
+        </Neuron>
+        <Neuron>
+          <_weights>
+            <double>-0.32176578851498938</double>
+            <double>0.058242289842219228</double>
+            <double>0.088637518737762017</double>
+            <double>0.88884354750106276</double>
+          </_weights>
+        </Neuron>
+        <Neuron>
+          <_weights>
+            <double>0.1209058636431144</double>
+            <double>0.68861340018390371</double>
+            <double>0.68825589059305181</double>
+            <double>0.0032960241675824039</double>
+          </_weights>
+        </Neuron>
+        <Neuron>
+          <_weights>
+            <double>0.76634305611548159</double>
+            <double>0.635961544064787</double>
+            <double>0.026505664468978375</double>
+            <double>0.10306245326207134</double>
+          </_weights>
+        </Neuron>
+        <Neuron>
+          <_weights>
+            <double>0.73067466250186541</double>
+            <double>0.86028446064343889</double>
+            <double>0.0690714419209731</double>
+            <double>0.28883338686490123</double>
           </_weights>
         </Neuron>
       </_neurons>
     </_inputLayer>
     <_hiddenLayers />
     <_outputLayer>
-      <_inputNeuronCount>1</_inputNeuronCount>
+      <_inputNeuronCount>7</_inputNeuronCount>
       <_neuronCount>1</_neuronCount>
       <_neurons>
         <Neuron>
           <_weights>
-            <double>-0.25677216111532053</double>
-            <double>0.25347137602673442</double>
+            <double>0.57008530924566336</double>
+            <double>0.018686216798930531</double>
+            <double>0.12262119684490432</double>
+            <double>0.68290174970538442</double>
+            <double>-0.67991095487024211</double>
+            <double>0.20158636812194547</double>
+            <double>0.035520921012163593</double>
+            <double>0.400564886816109</double>
           </_weights>
         </Neuron>
       </_neurons>
