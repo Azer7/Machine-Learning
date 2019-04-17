@@ -98,7 +98,7 @@ namespace Pig
                 _winnerPlayer.gameFitness += 50;
                 if (this.turnCount != 200)
                     hasEnded = true;
-                _winnerPlayer.gameFitness += 2 * (this.maxTurns - this.turnCount);
+                _winnerPlayer.gameFitness += 1 * (this.maxTurns - this.turnCount);
             }
 
             _player1.totalFitness += _player1.gameFitness;

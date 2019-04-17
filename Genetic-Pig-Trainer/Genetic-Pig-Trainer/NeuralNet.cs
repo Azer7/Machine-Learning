@@ -12,7 +12,7 @@ namespace NN
     internal static class Constants
     {
         public static int debugGen = 0;
-        public static double mutationRate = 0.1;
+        public static double mutationRate = 0.15;
     }
 
     internal static class RndGen

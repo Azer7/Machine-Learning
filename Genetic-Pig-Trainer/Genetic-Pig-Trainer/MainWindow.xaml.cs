@@ -44,7 +44,7 @@ namespace Genetic_Pig_Trainer
             Pig.RndGen.rnd = rndGen;
             NN.RndGen.rnd = rndGen;
 
-            aiGeneration = new NN.Generation(20, 10, 3, 1, 1, 1);
+            aiGeneration = new NN.Generation(30, 40, 3, 2, 4, 1);
         }
 
         public void timer_Tick(object sender, EventArgs e)
