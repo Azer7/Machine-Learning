@@ -36,6 +36,7 @@ namespace Genetic_Pig_Trainer
         public MainWindow()
         {
             InitializeComponent();
+
             timer.Tick += new EventHandler(timer_Tick);
             timer.Interval = new TimeSpan(0, 0, 0, 0, 10);
 
@@ -44,7 +45,8 @@ namespace Genetic_Pig_Trainer
             Pig.RndGen.rnd = rndGen;
             NN.RndGen.rnd = rndGen;
 
-            aiGeneration = new NN.Generation(30, 40, 3, 2, 4, 1);
+            aiGeneration = new NN.Generation(20, 30, 3, 1, 1, 1);
+            //injectPlayer("basePlayer.dat", aiGeneration);
         }
 
         public void timer_Tick(object sender, EventArgs e)
@@ -58,9 +60,9 @@ namespace Genetic_Pig_Trainer
 
             //aiGeneration.playGen();
 
-            for(int i = 0; i < 5000; i++)
+            for (int i = 0; i < 5000; i++)
             {
-                aiGeneration.PlayGame();                
+                aiGeneration.PlayGame();
             }
 
             if (aiGeneration.currentGen % 50 == 0)
@@ -103,6 +105,31 @@ namespace Genetic_Pig_Trainer
 
                 File.WriteAllText("bestPlayer.dat", writeString);
             }
+        }
+
+        private void injectPlayer(string file, NN.Generation injectGen)
+        {
+            XmlSerializer deserializer = new XmlSerializer(typeof(Pig.Player));
+            Pig.Player aiPlayer = new Pig.Player();
+
+
+            FileStream openFile = new FileStream("basePlayer.dat", FileMode.Open);
+
+            Pig.Player tempPlayer;
+            try
+            {
+                tempPlayer = (Pig.Player)deserializer.Deserialize(openFile);
+            }
+            catch (Exception err)
+            {
+                System.Windows.Forms.MessageBox.Show(err.Message);
+                throw;
+            }
+
+            openFile.Close();
+
+            aiPlayer = new Pig.Player(tempPlayer);
+            injectGen.Players[0] = aiPlayer;
         }
 
         private void CalcBaseline()
@@ -159,6 +186,12 @@ namespace Genetic_Pig_Trainer
         private void BaselineBtn_Click(object sender, RoutedEventArgs e)
         {
             CalcBaseline();
+        }
+
+        private void TrainBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (aiGeneration != null)
+                aiGeneration.trainType = trainBox.SelectedIndex;
         }
     }
 }

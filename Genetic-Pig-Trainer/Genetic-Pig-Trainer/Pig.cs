@@ -22,6 +22,7 @@ namespace Pig
         public Player _currentPlayer;
         public Player _otherPlayer;
         public Player _winnerPlayer;
+        public int trainType = 0;
 
         public Pig(Player player1, Player player2)
         {
@@ -79,33 +80,47 @@ namespace Pig
 
         public void CalculateFitness()
         {
-            _player1.gameFitness = 0;
-            _player2.gameFitness = 0;
-
-            _player1.gameFitness += _player1._score;
-            _player2.gameFitness += _player2._score;
-
-
-            if (hasEnded)
+            if (trainType == 0)
             {
-                //add fitness to greater score difference
-                if (_winnerPlayer == _player1)
-                    _winnerPlayer.gameFitness += _winnerPlayer._score - _player2._score;
-                else
-                    _winnerPlayer.gameFitness += _winnerPlayer._score - _player1._score;
+                _player1.gameFitness = 0;
+                _player2.gameFitness = 0;
+
+                _player1.gameFitness += _player1._score;
+                _player2.gameFitness += _player2._score;
 
 
-                _winnerPlayer.gameFitness += 50;
-                if (this.turnCount != 200)
-                    hasEnded = true;
-                _winnerPlayer.gameFitness += 1 * (this.maxTurns - this.turnCount);
+                if (hasEnded)
+                {
+                    //add fitness to greater score difference
+                    if (_winnerPlayer == _player1)
+                        _winnerPlayer.gameFitness += _winnerPlayer._score - _player2._score;
+                    else
+                        _winnerPlayer.gameFitness += _winnerPlayer._score - _player1._score;
+
+
+                    _winnerPlayer.gameFitness += 1000;
+                    //if (this.turnCount != 200)
+                    //    hasEnded = true;
+                    _winnerPlayer.gameFitness += (this.maxTurns - this.turnCount);
+                }
+
+                _player1.totalFitness += _player1.gameFitness;
+                _player2.totalFitness += _player2.gameFitness;                
+            } else if(trainType == 1)
+            {
+                _player1.gameFitness = 0;
+                _player2.gameFitness = 0;
+                if (hasEnded)
+                    _winnerPlayer.gameFitness += 100;
+
+                _player1.totalFitness += _player1.gameFitness;
+                _player2.totalFitness += _player2.gameFitness;
+
+
             }
 
-            _player1.totalFitness += _player1.gameFitness;
-            _player2.totalFitness += _player2.gameFitness;
 
-
-
+            ///Reset Players            
             _player1._roundScore = 0;
             _player2._roundScore = 0;
             _player1._score = 0;
@@ -178,9 +193,9 @@ namespace Pig
             return outputs;
         }
 
-        public void Mutate(double mutationRate)
+        public void Mutate(double mutationRate, bool percentMutate = false)
         {
-            net.Mutate(mutationRate);
+            net.Mutate(mutationRate, percentMutate);
         }
     }
 }

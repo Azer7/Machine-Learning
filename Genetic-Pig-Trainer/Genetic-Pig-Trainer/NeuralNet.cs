@@ -13,6 +13,7 @@ namespace NN
     {
         public static int debugGen = 0;
         public static double mutationRate = 0.15;
+        public static bool percentMutate = false;
     }
 
     internal static class RndGen
@@ -30,6 +31,7 @@ namespace NN
         public int versusIndex = 0; //count through each versus player
         public int _currentGenIteration = 0;
         public int _iterationsPerGeneration = 0;
+        public int trainType = 0;
 
         //debug info
         public double maxFitness = 0;
@@ -105,7 +107,7 @@ namespace NN
                 Pig.Player cross2 = GetRandomMember(totalSqrtFitness);
 
                 Pig.Player newPlayer = new Pig.Player(cross1, cross2);
-                newPlayer.Mutate(Constants.mutationRate);
+                newPlayer.Mutate(Constants.mutationRate, Constants.percentMutate);
                 newPlayers.Add(newPlayer);
             }
 
@@ -177,6 +179,7 @@ namespace NN
 
                 //get two players
                 Pig.Pig game = new Pig.Pig(p1, p2);
+                game.trainType = trainType;
 
                 while (!game.hasEnded && game.turnCount < game.maxTurns)
                 {
@@ -325,17 +328,17 @@ namespace NN
         /// </summary>
         /// <param name="mutateRate">default 1% mutateRate</param>
         /// <returns></returns>
-        public void Mutate(double mutateRate = 0.01)
+        public void Mutate(double mutateRate = 0.01, bool percentMutate = false)
         {
             Random mutateGen = RndGen.rnd;
             //Random mutateGen = new Random(1);
 
-            _inputLayer.Mutate(mutateRate);
+            _inputLayer.Mutate(mutateRate, percentMutate);
             foreach (Layer hiddenLayer in _hiddenLayers)
             {
-                hiddenLayer.Mutate(mutateRate);
+                hiddenLayer.Mutate(mutateRate, percentMutate);
             }
-            _outputLayer.Mutate(mutateRate);
+            _outputLayer.Mutate(mutateRate, percentMutate);
         }
 
         public List<double> ComputeLayers(List<double> inputs)
@@ -404,11 +407,11 @@ namespace NN
             }
         }
 
-        public void Mutate(double mutateRate = 0.01)
+        public void Mutate(double mutateRate = 0.01, bool percentMutate = false)
         {
             foreach (Neuron neuron in _neurons)
             {
-                neuron.Mutate(mutateRate);
+                neuron.Mutate(mutateRate, percentMutate);
             }
         }
 
@@ -473,16 +476,24 @@ namespace NN
             }
         }
 
-        public void Mutate(double mutateRate = 0.01)
+        public void Mutate(double mutateRate = 0.01, bool percentMutate = false)
         {
             Random randomGen = RndGen.rnd;
             //Random randomGen = new Random(1);
 
             for (int i = 0; i < _weights.Count; i++)
             {
-                if (randomGen.NextDouble() < mutateRate)
+                if (percentMutate)
                 {
-                    _weights[i] = randomGen.NextDouble();
+                    double randomOffset = mutateRate * randomGen.NextDouble();
+                    _weights[i] = (_weights[i] - mutateRate) + randomOffset * 2;
+                }
+                else
+                {
+                    if (randomGen.NextDouble() < mutateRate)
+                    {
+                        _weights[i] = randomGen.NextDouble();
+                    }
                 }
             }
         }
