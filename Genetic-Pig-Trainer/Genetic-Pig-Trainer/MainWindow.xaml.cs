@@ -45,7 +45,8 @@ namespace Genetic_Pig_Trainer
             Pig.RndGen.rnd = rndGen;
             NN.RndGen.rnd = rndGen;
 
-            aiGeneration = new NN.Generation(20, 30, 3, 1, 1, 1);
+            //aiGeneration = new NN.Generation(30, 30, 3, 1, 1, 1);
+            aiGeneration = new NN.Generation(20, 20, 3, 1, 1, 1);
             //injectPlayer("basePlayer.dat", aiGeneration);
         }
 
@@ -137,6 +138,8 @@ namespace Genetic_Pig_Trainer
             Pig.Player humanPlayer = new Pig.Player();
             XmlSerializer deserializer = new XmlSerializer(typeof(Pig.Player));
             Pig.Player aiPlayer = new Pig.Player();
+            int wins = 0;
+            int gameIterations = 10000;
 
 
             FileStream openFile = new FileStream("basePlayer.dat", FileMode.Open);
@@ -158,7 +161,7 @@ namespace Genetic_Pig_Trainer
             aiPlayer = new Pig.Player(tempPlayer);
             Pig.Player bestCurrentPlayer = new Pig.Player(aiGeneration.Players[0]);
 
-            for (int i = 0; i < 10000; i++)
+            for (int i = 0; i < gameIterations; i++)
             {
                 //get two players
                 Pig.Pig game;
@@ -167,6 +170,8 @@ namespace Genetic_Pig_Trainer
                 else
                     game = new Pig.Pig(bestCurrentPlayer, aiPlayer);
 
+                game.trainType = aiGeneration.trainType;
+
                 while (!game.hasEnded && game.turnCount < game.maxTurns)
                 {
                     //breaks here
@@ -174,13 +179,17 @@ namespace Genetic_Pig_Trainer
 
                 }
 
+                if (game.hasEnded && game._winnerPlayer == bestCurrentPlayer)
+                    wins++;
+
                 aiPlayer.gameCount++;
                 bestCurrentPlayer.gameCount++;
                 game.CalculateFitness();
             }
 
             //ratio of fitness of bestplayer to otherplayer
-            baseLbl.Content = bestCurrentPlayer.totalFitness / aiPlayer.totalFitness;
+            //baseLbl.Content = bestCurrentPlayer.totalFitness / aiPlayer.totalFitness;
+            baseLbl.Content = ((double)wins / (double)gameIterations * 100) + "%";
         }
 
         private void BaselineBtn_Click(object sender, RoutedEventArgs e)

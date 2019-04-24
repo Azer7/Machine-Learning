@@ -26,7 +26,7 @@ namespace NN
     public class Generation
     {
         public int currentGen = 0;
-        public List<Pig.Player> Players = new List<Pig.Player>();        
+        public List<Pig.Player> Players = new List<Pig.Player>();
         public int playerIndex = 0; //count through each player
         public int versusIndex = 0; //count through each versus player
         public int _currentGenIteration = 0;
@@ -83,7 +83,7 @@ namespace NN
 
             maxFitness = Players[0].averageFitness;
 
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 6; i++)
                 newPlayers.Add(new Pig.Player(Players[i]));
 
 
@@ -100,7 +100,7 @@ namespace NN
             //    File.WriteAllText("bestPlayer.dat", stringwriter.ToString());
             //}
 
-            for (int i = 10; i < Players.Count; i++)
+            for (int i = 6; i < Players.Count; i++)
             {
                 Pig.Player cross1 = GetRandomMember(totalSqrtFitness);
                 //Pig.Player cross2 = GetRandomMember(totalSqrtFitness - Math.Pow(cross1.averageFitness, genPlayerFitScale), cross1);
@@ -112,6 +112,12 @@ namespace NN
             }
 
             Players = newPlayers; //copy over new players
+
+            //foreach (Pig.Player player in Players)
+            //{
+            //    player.net._outputLayer._neurons[0]._weights[0] = 0;
+            //    player.net._outputLayer._neurons[0]._weights[1] = 1;
+            //}
         }
 
         public Pig.Player GetRandomMember(double totalSqrtFitness, Pig.Player exclusion = null)
